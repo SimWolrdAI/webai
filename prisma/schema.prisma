@@ -1,0 +1,172 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Users ───────────────────────────────────────────────
+model User {
+  id            String   @id @default(uuid())
+  walletAddress String   @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  projects  Project[]
+  auditLogs AuditLog[]
+}
+
+// ─── Project (top-level container) ───────────────────────
+model Project {
+  id        String        @id @default(uuid())
+  userId    String
+  status    ProjectStatus @default(DRAFT)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  user           User            @relation(fields: [userId], references: [id])
+  tokenDraft     TokenDraft?
+  siteConfig     SiteConfig?
+  assets         Asset[]
+  launchAttempts LaunchAttempt[]
+  auditLogs      AuditLog[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+enum ProjectStatus {
+  DRAFT
+  SITE_GENERATING
+  SITE_PUBLISHED
+  LAUNCHING
+  LAUNCHED
+  FAILED
+}
+
+// ─── Token Draft ─────────────────────────────────────────
+model TokenDraft {
+  id          String  @id @default(uuid())
+  projectId   String  @unique
+  name        String
+  symbol      String
+  description String
+  decimals    Int     @default(9)
+  totalSupply String  @default("1000000000")
+  website     String?
+  twitter     String?
+  telegram    String?
+  discord     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+// ─── Site Config (generated landing page data) ───────────
+model SiteConfig {
+  id        String @id @default(uuid())
+  projectId String @unique
+  subdomain String @unique
+
+  templateId  String @default("modern")
+  // JSON blob: { primaryColor, secondaryColor, fontFamily, ... }
+  theme       String @default("{}")
+  // JSON blob: sections array with generated content
+  sections    String @default("[]")
+  // JSON blob: SEO metadata
+  seo         String @default("{}")
+  published   Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([subdomain])
+}
+
+// ─── Published Sites (full HTML, served at /s/[slug]) ────
+model PublishedSite {
+  id        String   @id @default(uuid())
+  slug      String   @unique
+  html      String   // full HTML content
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+}
+
+// ─── Assets (uploaded images, logos, banners) ────────────
+model Asset {
+  id        String    @id @default(uuid())
+  projectId String
+  type      AssetType
+  filename  String
+  path      String
+  mimeType  String
+  sizeBytes Int
+
+  createdAt DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+}
+
+enum AssetType {
+  LOGO
+  BANNER
+  FAVICON
+  OTHER
+}
+
+// ─── Launch Attempt ──────────────────────────────────────
+model LaunchAttempt {
+  id           String      @id @default(uuid())
+  projectId    String
+  status       LaunchStatus @default(PENDING)
+  txSignature  String?
+  mintAddress  String?
+  errorMessage String?
+  // JSON blob: the payload sent to Pump.fun / on-chain
+  payload      String      @default("{}")
+
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+}
+
+enum LaunchStatus {
+  PENDING
+  AWAITING_SIGNATURE
+  SUBMITTED
+  CONFIRMED
+  FAILED
+}
+
+// ─── Audit Log ───────────────────────────────────────────
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  projectId String?
+  action    String
+  details   String   @default("{}")
+  ip        String?
+  createdAt DateTime @default(now())
+
+  user    User?    @relation(fields: [userId], references: [id])
+  project Project? @relation(fields: [projectId], references: [id])
+
+  @@index([userId])
+  @@index([projectId])
+  @@index([action])
+  @@index([createdAt])
+}
+

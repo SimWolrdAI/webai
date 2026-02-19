@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+}
+
+body {
+  background: #000000;
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Minimal scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #333 transparent;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+/* Terminal-style wallet button overrides */
+.wallet-terminal-btn .wallet-adapter-button {
+  width: 100% !important;
+  background: #111 !important;
+  border: 1px solid #222 !important;
+  border-radius: 0.5rem !important;
+  padding: 0.875rem 1rem !important;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace !important;
+  font-size: 14px !important;
+  color: #888 !important;
+  transition: all 0.2s ease !important;
+  justify-content: center !important;
+  height: auto !important;
+}
+
+.wallet-terminal-btn .wallet-adapter-button:hover {
+  background: #1a1a1a !important;
+  border-color: #444 !important;
+  color: #ccc !important;
+}
+
+.wallet-terminal-btn .wallet-adapter-button-trigger {
+  background: #111 !important;
+}
+
+/* Override the wallet modal styles to match terminal theme */
+.wallet-adapter-modal-wrapper {
+  background: #111 !important;
+  border: 1px solid #222 !important;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace !important;
+}
+
+.wallet-adapter-modal-title {
+  color: #ccc !important;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace !important;
+}
+
+.wallet-adapter-modal-list li {
+  background: #0a0a0a !important;
+  border: 1px solid #222 !important;
+}
+
+.wallet-adapter-modal-list li:hover {
+  background: #1a1a1a !important;
+}
+
+.wallet-adapter-modal-list .wallet-adapter-button {
+  color: #ccc !important;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace !important;
+}
+
+.wallet-adapter-modal-button-close {
+  background: #222 !important;
+}
+
+.wallet-adapter-modal-button-close:hover {
+  background: #333 !important;
+}
