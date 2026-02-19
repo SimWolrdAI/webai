@@ -1,43 +1,24 @@
-import { prisma } from "@/lib/db";
-import { notFound } from "next/navigation";
-import type { Metadata } from "next";
+"use client";
 
-interface Props {
-  params: Promise<{ slug: string }>;
-}
+import { useParams } from "next/navigation";
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
-  return { title: slug };
-}
-
-export default async function PublishedSitePage({ params }: Props) {
-  const { slug } = await params;
-
-  const site = await prisma.publishedSite.findUnique({
-    where: { slug },
-  });
-
-  if (!site) {
-    notFound();
-  }
+export default function PublishedSitePage() {
+  const params = useParams();
+  const slug = params.slug as string;
 
   return (
-    <>
-      {/* Full-screen iframe pointing to the raw HTML API */}
-      <iframe
-        src={`/api/site/${slug}`}
-        style={{
-          position: "fixed",
-          inset: 0,
-          width: "100vw",
-          height: "100vh",
-          border: "none",
-          margin: 0,
-          padding: 0,
-        }}
-        title={slug}
-      />
-    </>
+    <iframe
+      src={`/api/site/${slug}`}
+      style={{
+        position: "fixed",
+        inset: 0,
+        width: "100vw",
+        height: "100vh",
+        border: "none",
+        margin: 0,
+        padding: 0,
+      }}
+      title={slug}
+    />
   );
 }

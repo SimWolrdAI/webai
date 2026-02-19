@@ -2,7 +2,6 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useWallet } from "@solana/wallet-adapter-react";
 import {
   Sparkles, ArrowLeft, Loader2, ExternalLink,
   Send, Copy, Check, X, FileCode, MessageSquare,
@@ -43,7 +42,7 @@ type ModalState =
 
 export default function CreatePage() {
   const router = useRouter();
-  const { publicKey } = useWallet();
+  const publicKey = null; // wallet removed
 
   /* ── Step 1: Describe ── */
   const [description, setDescription] = useState("");
@@ -411,7 +410,7 @@ export default function CreatePage() {
           description: botDescription,
           systemPrompt,
           template: selectedTemplate || null,
-          walletAddress: publicKey?.toBase58() || null,
+          walletAddress: null,
         }),
       });
 
