@@ -5,8 +5,7 @@ export const metadata: Metadata = {
   title: "WebAI",
   description: "AI-powered bot generation platform. Describe your bot, get production-ready code.",
   icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
+    icon: "/favicon.png",
   },
 };
 
